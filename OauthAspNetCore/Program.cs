@@ -1,5 +1,8 @@
+using FirebaseAdmin;
+using Google.Apis.Auth.OAuth2;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using OauthAspNetCore.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,6 +24,12 @@ builder.Services.AddCors(options =>
         });
 });
 
+var credentials = GoogleCredential.FromFile("./firebase-adminsdk.json");
+FirebaseApp.Create(new AppOptions
+{
+    Credential = credentials,
+});
+
 builder.Services.AddAuthentication(options =>
 {
     // Spécifie le schéma d'authentification par défaut utilisé pour les opérations d'authentification.
@@ -30,7 +39,7 @@ builder.Services.AddAuthentication(options =>
 {
     // Authority indique l'URL de base qui représente l'émetteur du jeton (Firebase dans ce cas).
     // Utilisez l'ID du projet Firebase comme partie de l'URL.
-    options.Authority = "https://securetoken.google.com/PROJET-ID";
+    options.Authority = "https://securetoken.google.com/";
 
     // TokenValidationParameters spécifie les paramètres pour valider les jetons d'authentification.
     options.TokenValidationParameters = new TokenValidationParameters
@@ -38,12 +47,12 @@ builder.Services.AddAuthentication(options =>
         // ValidateIssuer indique si l'émetteur du jeton doit être validé.
         ValidateIssuer = true,
         // Spécifie l'ID de l'émetteur à valider. Utilisez l'URL avec l'ID du projet Firebase.
-        ValidIssuer = "https://securetoken.google.com/PROJET-ID",
+        ValidIssuer = "https://securetoken.google.com/",
 
         // ValidateAudience indique si l'audience du jeton doit être validée.
         ValidateAudience = true,
         // Spécifie l'ID de l'audience à valider. Utilisez l'ID du projet Firebase.
-        ValidAudience = "PROJET-ID",
+        ValidAudience = "",
 
         // ValidateLifetime indique si la période de validité du jeton doit être validée.
         ValidateLifetime = true
@@ -59,6 +68,7 @@ app.UseCors("AllowAngularDev");
 app.UseRouting();
 app.UseDefaultFiles();
 app.UseStaticFiles();
+app.UseMiddleware<VerifierUtilisateurMiddleware>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

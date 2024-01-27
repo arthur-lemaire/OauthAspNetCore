@@ -18,11 +18,10 @@ namespace OauthAspNetCore.Middleware
 
         public async Task Invoke(HttpContext context)
         {
-            var token = context.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
             var authorizeAttribute = context.GetEndpoint()?.Metadata?.GetMetadata<Microsoft.AspNetCore.Authorization.AuthorizeAttribute>();
-
             if (authorizeAttribute != null)
             {
+                var token = context.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
 
                 if (string.IsNullOrEmpty(token))
                 {

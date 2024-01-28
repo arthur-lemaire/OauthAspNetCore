@@ -30,31 +30,32 @@ FirebaseApp.Create(new AppOptions
     Credential = credentials,
 });
 
+// Je l'ai laissÃ© pour prouver sa faisabilitÃ© mais je prÃ©fÃ¨re utiliser le SDK Firebase Admin(en Middleware) car il me permet d'avoir une seule config JSON en commun pour plusieurs projets et gÃ©rer d'autres points de sÃ©curitÃ© facilement.
 builder.Services.AddAuthentication(options =>
 {
-    // Spécifie le schéma d'authentification par défaut utilisé pour les opérations d'authentification.
+    // SpÃ©cifie le schÃ©ma d'authentification par dÃ©faut utilisÃ© pour les opÃ©rations d'authentification.
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 }).AddJwtBearer(options =>
 {
-    // Authority indique l'URL de base qui représente l'émetteur du jeton (Firebase dans ce cas).
+    // Authority indique l'URL de base qui reprÃ©sente l'Ã©metteur du jeton (Firebase dans ce cas).
     // Utilisez l'ID du projet Firebase comme partie de l'URL.
     options.Authority = "https://securetoken.google.com/";
 
-    // TokenValidationParameters spécifie les paramètres pour valider les jetons d'authentification.
+    // TokenValidationParameters spÃ©cifie les paramÃ¨tres pour valider les jetons d'authentification.
     options.TokenValidationParameters = new TokenValidationParameters
     {
-        // ValidateIssuer indique si l'émetteur du jeton doit être validé.
+        // ValidateIssuer indique si l'Ã©metteur du jeton doit Ãªtre validÃ©.
         ValidateIssuer = true,
-        // Spécifie l'ID de l'émetteur à valider. Utilisez l'URL avec l'ID du projet Firebase.
+        // SpÃ©cifie l'ID de l'Ã©metteur Ã  valider. Utilisez l'URL avec l'ID du projet Firebase.
         ValidIssuer = "https://securetoken.google.com/",
 
-        // ValidateAudience indique si l'audience du jeton doit être validée.
+        // ValidateAudience indique si l'audience du jeton doit Ãªtre validÃ©e.
         ValidateAudience = true,
-        // Spécifie l'ID de l'audience à valider. Utilisez l'ID du projet Firebase.
+        // SpÃ©cifie l'ID de l'audience Ã  valider. Utilisez l'ID du projet Firebase.
         ValidAudience = "",
 
-        // ValidateLifetime indique si la période de validité du jeton doit être validée.
+        // ValidateLifetime indique si la pÃ©riode de validitÃ© du jeton doit Ãªtre validÃ©e.
         ValidateLifetime = true
     };
 });
